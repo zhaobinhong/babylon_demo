@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <title>立方体一个</title>
+
+    <!-- Babylon.js -->
+    <script src="./js/pep.js"></script>
+    <script src="./js/dat.gui.min.js"></script>
+    <script src="./js/ammo.js"></script>
+    <script src="./js/cannon.js"></script>
+    <script src="./js/Oimo.js"></script>
+    <script src="./js/libktx.js"></script>
+    <script src="./js/earcut.min.js"></script>
+    <script src="./js/babylon.js"></script>
+    <script src="./js/babylon.inspector.bundle.js"></script>
+    <script src="./js/babylonjs.materials.min.js"></script>
+    <script src="./js/babylonjs.proceduralTextures.min.js"></script>
+    <script src="./js/babylonjs.postProcess.min.js"></script>
+    <script src="./js/babylonjs.loaders.js"></script>
+    <script src="./js/babylonjs.serializers.min.js"></script>
+    <script src="./js/babylon.gui.min.js"></script>
+
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+<canvas id="renderCanvas"></canvas>
+<script>
+    var canvas = document.getElementById("renderCanvas");
+
+    var engine = null;
+    var scene = null;
+    var sceneToRender = null;
+    var createDefaultEngine = function () {
+        return new BABYLON.Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true});
+    };
+    var createScene = function () {
+
+        // Create the scene space
+        var scene = new BABYLON.Scene(engine);
+
+        // Add a camera to the scene and attach it to the canvas
+        /*
+        * name: string 定义摄像机的名称
+        * alpha: number 定义摄像机沿对数轴的旋转
+        * beta: number 定义摄像机沿纬度轴的旋转
+        * radius: number 定义相机到目标的距离
+        * target: Vector3 定义相机目标
+        * scene: Scene 定义相机所属的场景
+        */
+        var camera = new BABYLON.ArcRotateCamera("Camera", 3 * Math.PI / 4, Math.PI / 4, 10, BABYLON.Vector3.Zero(), scene);
+        camera.attachControl(canvas, true);
+
+        // Add lights to the scene
+        var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+        var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+
+        // Add and manipulate meshes in the scene
+        // 方的
+        // height 高度	（数字）高度尺寸，覆盖尺寸属性	尺寸
+        // width 宽度	（数字）宽度大小，覆盖大小属性	尺寸
+        // depth 深度	（数字）深度大小，覆盖大小属性  尺寸
+
+        var box = BABYLON.MeshBuilder.CreateBox("box", {height: 1, width: 1, depth: 1}, scene);
+        // var box2 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
+        // var box3 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
+        // var box1 = BABYLON.MeshBuilder.CreateBox("box1", {height: 1, width: 1, depth: 1}, scene);
+        // var box5 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
+        // box1.position.z = 1.5;
+        // box2.position.z = 1.5;
+        // box2.position.x = 1.5;
+        // box3.position.z = 1.5;
+        // box3.position.x = 3;
+        // box5.position.z = 1.5;
+        // box5.position.y = 1.5;
+
+        // 圆的
+        // diameterX 直径X	X轴上的（数字）直径，覆盖直径属性	直径
+        // diameterY 直径Y	Y轴上的（数字）直径，覆盖直径属性	直径
+        // diameterZ 直径Z	Z轴上的（数字）直径，覆盖直径属性
+        // var mySphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {diameter: 2, diameterX: 3,diameterZ: 1}, scene);
+
+        // Add and manipulate meshes in the scene
+        // 平面
+        // height 高度	（数字）高度尺寸，覆盖尺寸属性	尺寸
+        // width 宽度	（数字）宽度大小，覆盖大小属性	尺寸
+        // var plane = BABYLON.MeshBuilder.CreatePlane("plane", {height:2, width: 1}, scene);
+
+        return scene;
+
+    };
+    var engine;
+    try {
+        engine = createDefaultEngine();
+    } catch (e) {
+        console.log("the available createEngine function failed. Creating the default engine instead");
+        engine = createDefaultEngine();
+    }
+    if (!engine) throw 'engine should not be null.';
+    scene = createScene();
+    ;
+    sceneToRender = scene
+
+    engine.runRenderLoop(function () {
+        if (sceneToRender) {
+            sceneToRender.render();
+        }
+    });
+
+    // Resize
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+</script>
+</body>
+</html>
