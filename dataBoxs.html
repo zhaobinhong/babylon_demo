@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <title>立方体一打</title>
+
+    <!-- Babylon.js -->
+    <script src="./js/pep.js"></script>
+    <script src="./js/dat.gui.min.js"></script>
+    <script src="./js/ammo.js"></script>
+    <script src="./js/cannon.js"></script>
+    <script src="./js/Oimo.js"></script>
+    <script src="./js/libktx.js"></script>
+    <script src="./js/earcut.min.js"></script>
+    <script src="./js/babylon.js"></script>
+    <script src="./js/babylon.inspector.bundle.js"></script>
+    <script src="./js/babylonjs.materials.min.js"></script>
+    <script src="./js/babylonjs.proceduralTextures.min.js"></script>
+    <script src="./js/babylonjs.postProcess.min.js"></script>
+    <script src="./js/babylonjs.loaders.js"></script>
+    <script src="./js/babylonjs.serializers.min.js"></script>
+    <script src="./js/babylon.gui.min.js"></script>
+
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+<canvas id="renderCanvas"></canvas>
+<script>
+    var canvas = document.getElementById("renderCanvas");
+
+    var engine = null;
+    var scene = null;
+    var sceneToRender = null;
+    var createDefaultEngine = function () {
+        /*
+        * < BABYLON.Engine > 引擎
+        * canvasOrContext: Nullable<HTMLCanvasElement | WebGLRenderingContext> 定义用于渲染的canvas或WebGL上下文。如果提供WebGL上下文，Babylon.js将不会在画布上挂接事件（如指针，键盘等），因此将没有事件可观察对象。当Babylon.js用作系统上使用WebGL上下文的插件时，通常使用此方法
+        * antialias: boolean 定义启用平滑（默认值：false）
+        * options: EngineOptions 定义要发送到getContext（）函数的更多选项 ==>详见《EngineOptions.md》
+        * Returns Engine
+        */
+        return new BABYLON.Engine(canvas, true, {preserveDrawingBuffer: true, stencil: true});
+    };
+    var createScene = function () {
+
+        // Create the scene space
+        var scene = new BABYLON.Scene(engine);
+
+        // Add a camera to the scene and attach it to the canvas
+        /*
+        * name: string 定义摄像机的名称
+        * alpha: number 定义摄像机沿对数轴的旋转
+        * beta: number 定义摄像机沿纬度轴的旋转
+        * radius: number 定义相机到目标的距离
+        * target: Vector3 定义相机目标
+        * scene: Scene 定义相机所属的场景
+        */
+        var camera = new BABYLON.ArcRotateCamera("Camera", 4 * Math.PI / 4, Math.PI / 2, 10, BABYLON.Vector3.Zero(), scene);
+        camera.attachControl(canvas, true);
+
+        // Add lights to the scene
+
+        /*
+        * < BABYLON.HemisphericLight > 半球光 Parameters
+        * name: string
+        * 友好的灯名称
+        *
+        * direction: Vector3
+        * 光反射的方向
+        *
+        * scene: Scene
+        * 灯光所属的场景
+        */
+        var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+
+        /*
+        * < BABYLON.PointLight > 点光源 Parameters
+        * name: string
+        * 名称
+        *
+        * position: Vector3
+        * The position of the point light in the scene
+        * 灯光在场景中的位置
+        * scene: Scene
+        * 灯光所属的场景
+        */
+        var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+
+        var faceColors = [];
+        faceColors[0] = BABYLON.Color3.Blue();
+        faceColors[1] = BABYLON.Color3.Red();
+        faceColors[2] = BABYLON.Color3.Green();
+        faceColors[3] = BABYLON.Color3.White();
+        faceColors[4] = BABYLON.Color3.Yellow();
+        faceColors[5] = BABYLON.Color3.Black();
+
+        // Add and manipulate meshes in the scene
+        // 方的
+        // height 高度	（数字）高度尺寸，覆盖尺寸属性	尺寸
+        // width 宽度	（数字）宽度大小，覆盖大小属性	尺寸
+        // depth 深度	（数字）深度大小，覆盖大小属性  尺寸
+        var box = BABYLON.MeshBuilder.CreateBox("box", { height: 1, width: 1, depth: 1}, scene);
+        var box2 = BABYLON.MeshBuilder.CreateBox("box2", {faceColors:faceColors,height: 1, width: 1, depth: 1}, scene);
+        var box3 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
+        var box1 = BABYLON.MeshBuilder.CreateBox("box1", {height: 1, width: 1, depth: 1}, scene);
+        var box5 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
+
+        // 给某个盒子设置颜色
+        var materialBox = new BABYLON.StandardMaterial("mat", scene);
+        materialBox.diffuseColor = new BABYLON.Color3(0.89, 0.23, 0.61, 0.77);
+        box.material = materialBox;
+
+
+        box1.position.z = 1.5;
+        box2.position.z = 1.5;
+        box2.position.x = 1.5;
+        box3.position.z = 1.5;
+        box3.position.x = 3;
+        box5.position.z = 1.5;
+        box5.position.y = 1.5;
+
+        // 圆的
+        // diameterX 直径X	X轴上的（数字）直径，覆盖直径属性	直径
+        // diameterY 直径Y	Y轴上的（数字）直径，覆盖直径属性	直径
+        // diameterZ 直径Z	Z轴上的（数字）直径，覆盖直径属性
+        // var mySphere = BABYLON.MeshBuilder.CreateSphere("mySphere", {diameter: 2, diameterX: 3,diameterZ: 1}, scene);
+
+        // Add and manipulate meshes in the scene
+        // 平面
+        // height 高度	（数字）高度尺寸，覆盖尺寸属性	尺寸
+        // width 宽度	（数字）宽度大小，覆盖大小属性	尺寸
+        // var plane = BABYLON.MeshBuilder.CreatePlane("plane", {height:2, width: 1}, scene);
+
+
+        // 添加背景
+        var skybox = BABYLON.Mesh.CreateBox("BackgroundSkybox", 400, scene, undefined, BABYLON.Mesh.BACKSIDE);
+
+        // Create and tweak the background material.
+        var backgroundMaterial = new BABYLON.BackgroundMaterial("backgroundMaterial", scene);
+        backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/TropicalSunnyDay", scene);
+        backgroundMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skybox.material = backgroundMaterial;
+
+        return scene;
+
+    };
+    var engine;
+    try {
+        engine = createDefaultEngine();
+    } catch (e) {
+        console.log("the available createEngine function failed. Creating the default engine instead");
+        engine = createDefaultEngine();
+    }
+    if (!engine) throw 'engine should not be null.';
+    scene = createScene();
+    ;
+    sceneToRender = scene
+
+    engine.runRenderLoop(function () {
+        if (sceneToRender) {
+            sceneToRender.render();
+        }
+    });
+
+    // Resize
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+</script>
+</body>
+</html>
