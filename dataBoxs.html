@@ -70,9 +70,13 @@
         * target: Vector3 定义相机目标
         * scene: Scene 定义相机所属的场景
         */
-        var camera = new BABYLON.ArcRotateCamera("Camera", 4 * Math.PI / 4, Math.PI / 2, 10, BABYLON.Vector3.Zero(), scene);
+        // var camera = new BABYLON.ArcRotateCamera("Camera", 5 * Math.PI / 2.007, Math.PI / 2.07, 86, BABYLON.Vector3.Zero(), scene);
+        var camera = new BABYLON.ArcRotateCamera("Camera",  0, 0, 0, new BABYLON.Vector3(0, 0, -0), scene);
+        camera.setPosition(new BABYLON.Vector3(0, 0, -100));
         camera.attachControl(canvas, true);
-
+        // scene.useclonedmeshmap=true;
+        // scene.useMaterialMeshMap=true;
+        // scene.useGeometryIdsMap=true;
         // Add lights to the scene
 
         /*
@@ -114,25 +118,58 @@
         // height 高度	（数字）高度尺寸，覆盖尺寸属性	尺寸
         // width 宽度	（数字）宽度大小，覆盖大小属性	尺寸
         // depth 深度	（数字）深度大小，覆盖大小属性  尺寸
-        var box = BABYLON.MeshBuilder.CreateBox("box", { height: 1, width: 1, depth: 1}, scene);
-        var box2 = BABYLON.MeshBuilder.CreateBox("box2", {faceColors:faceColors,height: 1, width: 1, depth: 1}, scene);
-        var box3 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
-        var box1 = BABYLON.MeshBuilder.CreateBox("box1", {height: 1, width: 1, depth: 1}, scene);
-        var box5 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
 
         // 给某个盒子设置颜色
         var materialBox = new BABYLON.StandardMaterial("mat", scene);
         materialBox.diffuseColor = new BABYLON.Color3(0.89, 0.23, 0.61, 0.77);
-        box.material = materialBox;
 
+        // 模拟当前数据量
+        for (let i = 0; i < 90; i++) {
+            let box  = BABYLON.MeshBuilder.CreateBox("box" + i, { height: 1, width: 1, depth: 1}, scene);
+            // 设置颜色
+            box.material = materialBox;
+            // 设置位置
+            let x = ( ( i % 6 ) * 4 ) - 8;
+            let y = ( - ( Math.floor( i / 3 ) % 3 ) * 4 ) + 8;
+            let z = ( Math.floor( i / 18 ) ) * 1.5 - 2;
+            box.position.x = x;
+            box.position.y = y;
+            box.position.z = z;
 
-        box1.position.z = 1.5;
-        box2.position.z = 1.5;
-        box2.position.x = 1.5;
-        box3.position.z = 1.5;
-        box3.position.x = 3;
-        box5.position.z = 1.5;
-        box5.position.y = 1.5;
+            // 给盒子绑定点击事件
+            box.actionManager = new BABYLON.ActionManager(scene);
+            // new BABYLON.ExecuteCodeAction 创建一个执行代码
+            box.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function (event) {
+                console.log(event.source.id)
+            }));
+            // BABYLON.ActionManager.NothingTrigger：从不提出。用于具有action.then功能的子动作。
+            // BABYLON.ActionManager.OnPickTrigger：当用户触摸/单击网格时引发。
+            // BABYLON.ActionManager.OnDoublePickTrigger：在用户双击/单击网格时引发。
+            // BABYLON.ActionManager.OnPickDownTrigger：当用户触摸/点击网格时引发
+            // BABYLON.ActionManager.OnPickUpTrigger：当用户触摸/单击网格时引发。
+            // BABYLON.ActionManager.OnPickOutTrigger：当用户触摸/向下单击网格然后移出网格时引发。
+            // BABYLON.ActionManager.OnLeftPickTrigger：当用户使用左键触摸/单击网格时引发。
+            // BABYLON.ActionManager.OnRightPickTrigger：当用户触摸/单击带有右键的网格时引发。
+            // BABYLON.ActionManager.OnCenterPickTrigger：当用户触摸/单击带有中心按钮的网格时引发。
+            // BABYLON.ActionManager.OnLongPressTrigger：当用户在毫秒内长时间触摸/单击网格时触发（由BABYLON.Scene.LongPressDelay定义）。
+            // BABYLON.ActionManager.OnPointerOverTrigger：当指针在网格上方时引发。只举过一次。
+            // BABYLON.ActionManager.OnPointerOutTrigger：当指针不再位于网格上方时引发。只举过一次。
+            // BABYLON.ActionManager.OnIntersectionEnterTrigger：当网格与特定网格相交时引发。只举过一次。
+            // BABYLON.ActionManager.OnIntersectionExitTrigger：当网格不再与特定网格相交时引发。只举过一次
+        }
+        // var box = BABYLON.MeshBuilder.CreateBox("box", { height: 1, width: 1, depth: 1}, scene);
+        // var box2 = BABYLON.MeshBuilder.CreateBox("box2", {faceColors:faceColors,height: 1, width: 1, depth: 1}, scene);
+        // var box3 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
+        // var box1 = BABYLON.MeshBuilder.CreateBox("box1", {height: 1, width: 1, depth: 1}, scene);
+        // var box5 = BABYLON.MeshBuilder.CreateBox("box2", {height: 1, width: 1, depth: 1}, scene);
+
+        // box1.position.z = 1.5;
+        // box2.position.z = 1.5;
+        // box2.position.x = 1.5;
+        // box3.position.z = 1.5;
+        // box3.position.x = 3;
+        // box5.position.z = 1.5;
+        // box5.position.y = 1.5;
 
         // 圆的
         // diameterX 直径X	X轴上的（数字）直径，覆盖直径属性	直径
@@ -168,8 +205,7 @@
     }
     if (!engine) throw 'engine should not be null.';
     scene = createScene();
-    ;
-    sceneToRender = scene
+    sceneToRender = scene;
 
     engine.runRenderLoop(function () {
         if (sceneToRender) {
