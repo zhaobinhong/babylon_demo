@@ -119,13 +119,13 @@
         // width 宽度	（数字）宽度大小，覆盖大小属性	尺寸
         // depth 深度	（数字）深度大小，覆盖大小属性  尺寸
 
-        // 给某个盒子设置颜色
-        var materialBox = new BABYLON.StandardMaterial("mat", scene);
-        materialBox.diffuseColor = new BABYLON.Color3(0.89, 0.23, 0.61, 0.77);
-
         // 模拟当前数据量
         for (let i = 0; i < 90; i++) {
             let box  = BABYLON.MeshBuilder.CreateBox("box" + i, { height: 1, width: 1, depth: 1}, scene);
+
+            var materialBox = new BABYLON.StandardMaterial("boxMaterial", scene);
+            // 给某个盒子设置颜色
+            materialBox.diffuseColor = new BABYLON.Color3(0.89, 0.23, 0.61, 0.77);
             // 设置颜色
             box.material = materialBox;
             // 设置位置
@@ -135,6 +135,21 @@
             box.position.x = x;
             box.position.y = y;
             box.position.z = z;
+
+            //创建盒子文字
+            var barLegend = BABYLON.Mesh.CreateGround("barLegend", scene);
+            barLegend.position.x = box.position.x;
+            barLegend.position.y = box.position.y;
+            barLegend.position.z = box.position.z ;
+            // console.log(box.position.x,box.position.y+1, box.position.z)
+            // box.material = new BABYLON.StandardMaterial("", scene);
+            var barLegendTexture = new BABYLON.DynamicTexture("title texture", 140, scene, true);
+            barLegendTexture.hasAlpha = true;
+            box.material.diffuseTexture = barLegendTexture;
+            box.material.emissiveColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+            barLegendTexture.drawText(box.name, 20, 20, "400 16px Segoe UI", "blue", '#fff');
+            barLegendTexture.drawText("Eternalcoding", null, 70, "bold 18px Segoe UI", "blue", null);
+            barLegendTexture.drawText("( statistics )", null, 120, "20px Segoe UI", "blue", null);
 
             // 给盒子绑定点击事件
             box.actionManager = new BABYLON.ActionManager(scene);

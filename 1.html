@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- Babylon.js -->
+<script src="./js/pep.js"></script>
+<script src="./js/dat.gui.min.js"></script>
+<script src="./js/ammo.js"></script>
+<script src="./js/cannon.js"></script>
+<script src="./js/Oimo.js"></script>
+<script src="./js/libktx.js"></script>
+<script src="./js/earcut.min.js"></script>
+<script src="./js/babylon.js"></script>
+<script src="./js/babylon.inspector.bundle.js"></script>
+<script src="./js/babylonjs.materials.min.js"></script>
+<script src="./js/babylonjs.proceduralTextures.min.js"></script>
+<script src="./js/babylonjs.postProcess.min.js"></script>
+<script src="./js/babylonjs.loaders.js"></script>
+<script src="./js/babylonjs.serializers.min.js"></script>
+<script src="./js/babylon.gui.min.js"></script>
+
+<canvas touch-action="none" id="renderCanvas" width="1955" height="1407" tabindex="1"
+        style="position: static; width: 100%; height: 100%; padding: 0px; margin: 0px; top: auto; bottom: auto; left: auto; right: auto;"></canvas>
+<div id="mydiv" width="955" height="407"></div>
+<script>
+    var canvas = document.getElementById("renderCanvas");
+    var engine = new BABYLON.Engine(canvas, true);
+    //var loadingScreen = new MyLoadingScreen("I'm loading!!");
+    ////Set the loading screen in the engine to replace the default one
+    //engine.loadingScreen = loadingScreen;
+    var createScene = function () {
+
+        // This creates a basic Babylon Scene object (non-mesh)
+        var scene = new BABYLON.Scene(engine);
+
+        // This creates and positions a free camera (non-mesh)
+        var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(3, 5, -10), scene);
+
+        // This targets the camera to scene origin
+        camera.setTarget(BABYLON.Vector3.Zero());
+
+        // This attaches the camera to the canvas
+        camera.attachControl(canvas, true);
+
+        // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+        var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+
+        // Default intensity is 1. Let's dim the light a small amount
+        light.intensity = 0.7;
+
+
+        // show axis
+        var showAxis = function (size) {
+            var makeTextPlane = function (text, color, size) {
+                var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 50, scene, true);
+                dynamicTexture.hasAlpha = true;
+                dynamicTexture.drawText(text, 5, 40, "bold 36px Arial", color, "transparent", true);
+                var plane = BABYLON.Mesh.CreatePlane("TextPlane", size, scene, true);
+                plane.material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
+                plane.material.backFaceCulling = false;
+                plane.material.specularColor = new BABYLON.Color3(0, 0, 0);
+                plane.material.diffuseTexture = dynamicTexture;
+                return plane;
+            };
+
+            var axisX = BABYLON.Mesh.CreateLines("axisX", [
+                BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0),
+                new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
+            ], scene);
+            axisX.color = new BABYLON.Color3(1, 0, 0);
+            var xChar = makeTextPlane("X", "red", size / 10);
+            xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
+            var axisY = BABYLON.Mesh.CreateLines("axisY", [
+                BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3(-0.05 * size, size * 0.95, 0),
+                new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3(0.05 * size, size * 0.95, 0)
+            ], scene);
+            axisY.color = new BABYLON.Color3(0, 1, 0);
+            var yChar = makeTextPlane("Y", "green", size / 10);
+            yChar.position = new BABYLON.Vector3(0, 0.9 * size, -0.05 * size);
+            var axisZ = BABYLON.Mesh.CreateLines("axisZ", [
+                BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3(0, -0.05 * size, size * 0.95),
+                new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3(0, 0.05 * size, size * 0.95)
+            ], scene);
+            axisZ.color = new BABYLON.Color3(0, 0, 1);
+            var zChar = makeTextPlane("Z", "blue", size / 10);
+            zChar.position = new BABYLON.Vector3(0, 0.05 * size, 0.9 * size);
+        };
+
+        showAxis(5);
+        // Our built-in 'sphere' shape. Params: name, subdivs, size, scene
+        //var sphere = BABYLON.Mesh.CreateSphere("sphere1", 16, 2, scene);
+
+        //// Move the sphere upward 1/2 its height
+        //sphere.position.y = 1;
+
+        // Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
+        //var ground = BABYLON.Mesh.CreateGround("ground1", 6, 6, 2, scene);
+
+        var box = BABYLON.Mesh.CreateBox("box", 1.0, scene);
+
+        box.position = new BABYLON.Vector3(0, 2, 0);
+
+        //var plane = BABYLON.Mesh.CreatePlane("plane", 2.0, scene);
+
+        //plane.position = new BABYLON.Vector3(2, 0, 1);
+
+        //var cylinder = BABYLON.Mesh.CreateCylinder("cylinder", 3, 3, 3, 6, 1, scene, false);
+
+        //cylinder.position = new BABYLON.Vector3(-2, 0, 1);
+
+        //var cylinder1 = BABYLON.Mesh.CreateCylinder("cylinder", 3, 2, 4, 6, 1, scene, false);
+
+        //cylinder1.position = new BABYLON.Vector3(-2, 0, 1);
+        //var cylinder2 = BABYLON.Mesh.CreateCylinder("cylinder", 3, 1, 5, 6, 1, scene, false);
+
+        //cylinder2.position = new BABYLON.Vector3(-2, 0, 1);
+        //var cylinder3 = BABYLON.Mesh.CreateCylinder("cylinder", 3, 0, 6, 6, 1, scene, false);
+
+        //cylinder3.position = new BABYLON.Vector3(-2, 0, 1);
+        //var cylinder4 = BABYLON.Mesh.CreateCylinder("cylinder", 3, 3, 7, 6, 1, scene, false);
+
+        //cylinder4.position = new BABYLON.Vector3(-2, 0, 1);
+        //var cylinder5 = BABYLON.Mesh.CreateCylinder("cylinder", 3, 3, 8, 6, 1, scene, false);
+
+        //cylinder5.position = new BABYLON.Vector3(-2, 0, 1);
+        //var cylinder6 = BABYLON.Mesh.CreateCylinder("cylinder", 3, 3, 9, 6, 1, scene, false);
+
+        //cylinder6.position = new BABYLON.Vector3(-2, 0, 1);
+
+        //var torus = BABYLON.Mesh.CreateTorus("torus", 3, 0.2, 25, scene, false);
+
+        //torus.position = new BABYLON.Vector3(0, 0, 1);
+
+        //var knot = BABYLON.Mesh.CreateTorusKnot("knot", 2, 0.5, 128, 32, 2, 3, scene);
+
+        //knot.position.y = 3;
+
+        return scene;
+
+    };
+    var scene = createScene();
+
+    engine.runRenderLoop(function () {
+        scene.render();
+    });
+
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+
+
+    //function MyLoadingScreen(text) {
+    //    //init the loader
+    //    this.loadingUIText = text;
+    //    this.loadingUIBackgroundColor = "#FFB6C1";
+    //}
+    //MyLoadingScreen.prototype.displayLoadingUI = function () {
+    //    alert(this.loadingUIText);
+    //};
+    //MyLoadingScreen.prototype.hideLoadingUI = function () {
+    //    alert("Loaded!");
+    //};
+    //myloadingscreen.prototype = {
+    //    displayloadingui: function () {
+
+    //    },
+    //    hideloadingui: function () {
+
+    //    },
+    //    loadinguibackgroundcolor: "#ffb6c1"
+    //};
+</script>
+</body>
+</html>
