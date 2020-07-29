@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>Babylon.js sample code</title>
+
+    <!-- Babylon.js -->
+    <script src="./js/pep.js"></script>
+    <script src="./js/dat.gui.min.js"></script>
+    <script src="./js/ammo.js"></script>
+    <script src="./js/cannon.js"></script>
+    <script src="./js/Oimo.js"></script>
+    <script src="./js/libktx.js"></script>
+    <script src="./js/earcut.min.js"></script>
+    <script src="./js/babylon.js"></script>
+    <script src="./js/babylon.inspector.bundle.js"></script>
+    <script src="./js/babylonjs.materials.min.js"></script>
+    <script src="./js/babylonjs.proceduralTextures.min.js"></script>
+    <script src="./js/babylonjs.postProcess.min.js"></script>
+    <script src="./js/babylonjs.loaders.js"></script>
+    <script src="./js/babylonjs.serializers.min.js"></script>
+    <script src="./js/babylon.gui.min.js"></script>
+
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+<canvas id="renderCanvas"></canvas>
+<script>
+    var canvas = document.getElementById("renderCanvas");
+
+    var engine = null;
+    var scene = null;
+    var sceneToRender = null;
+    var createDefaultEngine = function() { return new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true }); };
+    var createScene = function() {
+        var scene = new BABYLON.Scene(engine);
+        scene.clearColor = new BABYLON.Color3( .5, .5, .5);
+
+        var camera = new BABYLON.ArcRotateCamera("camera1",  -Math.PI / 2, Math.PI / 4, 5, new BABYLON.Vector3(0, 0, 0), scene);
+        camera.attachControl(canvas, true);
+
+        var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 0.5, 0), scene);
+        light.intensity = 0.8;
+
+        var blueMat = new BABYLON.StandardMaterial("blue", scene);
+        blueMat.emissiveColor = new BABYLON.Color3(0,0,1);
+
+        var redMat = new BABYLON.StandardMaterial("red", scene);
+        redMat.emissiveColor = new BABYLON.Color3(1,0,0);
+
+        var box = BABYLON.MeshBuilder.CreateBox("box", {}, scene);
+        box.position.y = 0.5;
+        var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 3, height:3}, scene)
+
+        var toSize = function(isChecked) {
+            if (isChecked) {
+                box.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+            }
+            else {
+                box.scaling = new BABYLON.Vector3(1, 1, 1);
+            }
+        }
+
+        var toPlace = function(isChecked) {
+            if (isChecked) {
+                box.position.y = 1.5;
+            }
+            else {
+                box.position.y = 0.5;
+            }
+        }
+
+        var setColor = function(but) {
+            switch(but) {
+                case 0:
+                    box.material = blueMat;
+                    break
+                case 1:
+                    box.material = redMat;
+                    break
+            }
+        }
+
+        var orientateY = function(angle) {
+            box.rotation.y = angle;
+        }
+
+        var displayValue = function(value) {
+            return BABYLON.Tools.ToDegrees(value) | 0;
+        }
+
+        var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+        var selectBox = new BABYLON.GUI.SelectionPanel("sp");
+        selectBox.width = 0.25;
+        selectBox.height = 0.48;
+        selectBox.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        selectBox.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+
+        advancedTexture.addControl(selectBox);
+
+        var transformGroup = new BABYLON.GUI.CheckboxGroup("Transformation");
+        transformGroup.addCheckbox("Small", toSize);
+        transformGroup.addCheckbox("High", toPlace);
+
+        var colorGroup = new BABYLON.GUI.RadioGroup("Color");
+        colorGroup.addRadio("Blue", setColor, true);
+        colorGroup.addRadio("Red", setColor);
+
+        var rotateGroup = new BABYLON.GUI.SliderGroup("Rotation", "S");
+        rotateGroup.addSlider("Angle", orientateY, "degs", 0, 2 * Math.PI, 0, displayValue)
+
+        selectBox.addGroup(transformGroup);
+        selectBox.addGroup(colorGroup);
+        selectBox.addGroup(rotateGroup);
+
+
+        return scene;
+    };
+    var engine;
+    try {
+        engine = createDefaultEngine();
+    } catch(e) {
+        console.log("the available createEngine function failed. Creating the default engine instead");
+        engine = createDefaultEngine();
+    }
+    if (!engine) throw 'engine should not be null.';
+    scene = createScene();;
+    sceneToRender = scene
+
+    engine.runRenderLoop(function () {
+        if (sceneToRender) {
+            sceneToRender.render();
+        }
+    });
+
+    // Resize
+    window.addEventListener("resize", function () {
+        engine.resize();
+    });
+</script>
+</body>
+</html>

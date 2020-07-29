@@ -125,8 +125,8 @@
         * scene: Scene 定义相机所属的场景
         */
         // var camera = new BABYLON.ArcRotateCamera("Camera", 5 * Math.PI / 2.007, Math.PI / 2.07, 86, BABYLON.Vector3.Zero(), scene);
-        var camera = new BABYLON.ArcRotateCamera("Camera",  0, 0, 0, new BABYLON.Vector3(0, 0, -0), scene);
-        camera.setPosition(new BABYLON.Vector3(0, 0, -10));
+        var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 0, new BABYLON.Vector3(0, 0, -0), scene);
+        camera.setPosition(new BABYLON.Vector3(0, 0, -20));
         camera.attachControl(canvas, true);
         // scene.useclonedmeshmap=true;
         // scene.useMaterialMeshMap=true;
@@ -174,8 +174,8 @@
         // depth 深度	（数字）深度大小，覆盖大小属性  尺寸
 
         // 模拟当前数据量
-        for (let i = 0; i < 180; i++) {
-            let box  = BABYLON.MeshBuilder.CreateBox(i, { height: 1, width: 1, depth: 1}, scene);
+        for (let i = 0; i < 90; i++) {
+            let box = BABYLON.MeshBuilder.CreateBox(i, {height: 1, width: 1, depth: 1}, scene);
 
             var materialBox = new BABYLON.StandardMaterial("boxMaterial", scene);
             // 给某个盒子设置颜色
@@ -183,15 +183,15 @@
             // 设置颜色
             box.material = materialBox;
             // 设置位置
-            let margin = 2.2;  // 间距
-            let column = 6;  // 列数
+            let margin = 1.4;  // 间距
+            let column = 10;  // 列数
             let row = 3; // 行数
             let left = 5.5; // 与左侧的距离
             let top = 2; // 与顶部的距离
-            let deepness = 10; // 深度
-            let x = ( ( i % column ) * margin ) - left;
-            let y = ( - ( Math.floor( i / column ) % row ) * margin ) + top;
-            let z = ( Math.floor( i / (row * column) ) ) * margin - deepness;
+            let deepness = 3; // 深度
+            let x = ((i % column) * margin) - left;
+            let y = (-(Math.floor(i / column) % row) * margin) + top;
+            let z = (Math.floor(i / (row * column))) * margin - deepness;
             box.position.x = x;
             box.position.y = y;
             box.position.z = z;
@@ -200,7 +200,7 @@
             var barLegend = BABYLON.Mesh.CreateGround("barLegend", scene);
             barLegend.position.x = box.position.x;
             barLegend.position.y = box.position.y;
-            barLegend.position.z = box.position.z ;
+            barLegend.position.z = box.position.z;
             // console.log(box.position.x,box.position.y+1, box.position.z)
             // box.material = new BABYLON.StandardMaterial("", scene);
             var barLegendTexture = new BABYLON.DynamicTexture("title texture", 140, scene, true);
@@ -216,9 +216,9 @@
             // new BABYLON.ExecuteCodeAction 创建一个执行代码
             box.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function (event) {
                 // console.log(event.source.id)
-                document.querySelector( '#val' ).value = event.source.id;
-                document.querySelector( '#title' ).value = "Loading " + event.source.id;
-                document.querySelector( '#detail' ).value = "( statistics " + event.source.id + ")";
+                document.querySelector('#val').value = event.source.id;
+                document.querySelector('#title').value = "Loading " + event.source.id;
+                document.querySelector('#detail').value = "( statistics " + event.source.id + ")";
             }));
             // BABYLON.ActionManager.NothingTrigger：从不提出。用于具有action.then功能的子动作。
             // BABYLON.ActionManager.OnPickTrigger：当用户触摸/单击网格时引发。
@@ -234,6 +234,127 @@
             // BABYLON.ActionManager.OnPointerOutTrigger：当指针不再位于网格上方时引发。只举过一次。
             // BABYLON.ActionManager.OnIntersectionEnterTrigger：当网格与特定网格相交时引发。只举过一次。
             // BABYLON.ActionManager.OnIntersectionExitTrigger：当网格不再与特定网格相交时引发。只举过一次
+
+
+            // 图例设置
+
+            var blueMat = new BABYLON.StandardMaterial("blue", scene);
+            blueMat.diffuseColor = new BABYLON.Color3(0, 0, 1, 0.77);
+
+            var redMat = new BABYLON.StandardMaterial("red", scene);
+            redMat.diffuseColor = new BABYLON.Color3(1, 0, 0, 0.77);
+
+            var toSize = function (isChecked) {
+                if (isChecked) {
+                    box.scaling = new BABYLON.Vector3(0.5, 0.5, 0.5);
+                } else {
+                    box.scaling = new BABYLON.Vector3(1, 1, 1);
+                }
+            }
+
+            var toPlace = function (isChecked) {
+                if (isChecked) {
+                    box.position.y += 1.5;
+                } else {
+                    box.position.y -= 1.5;
+                }
+            }
+
+            // 设置立方体之间 间距
+            var toMargin = function (but) {
+                let margin,
+                    column,
+                    row,
+                    left,
+                    top,
+                    deepness,
+                    x,
+                    y,
+                    z;
+                column = 10;  // 列数
+                row = 3; // 行数
+                left = .6; // 与左侧的距离 default 5.5
+                top = .6; // 与顶部的距离 default 2
+                deepness = .6; // 深度 default 3
+                switch (but) {
+                    case 0:
+                        margin = 1.5;  // 间距
+                        x = ((i % column) * margin) + left;
+                        y = ((Math.floor(i / column) % row) * margin) + top;
+                        z = (Math.floor(i / (row * column))) * margin + deepness;
+                        box.position.x = x;
+                        box.position.y = y;
+                        box.position.z = z;
+                        break;
+                    case 1:
+                        margin = 1.3;  // 间距
+                        x = ((i % column) * margin) + left;
+                        y = ((Math.floor(i / column) % row) * margin) + top;
+                        z = (Math.floor(i / (row * column))) * margin + deepness;
+                        box.position.x = x;
+                        box.position.y = y;
+                        box.position.z = z;
+                        break;
+                    case 2:
+                        margin = 1.1;  // 间距
+                        x = ((i % column) * margin) + left;
+                        y = ((Math.floor(i / column) % row) * margin) + top;
+                        z = (Math.floor(i / (row * column))) * margin + deepness;
+                        box.position.x = x;
+                        box.position.y = y;
+                        box.position.z = z;
+                        break;
+                }
+            };
+
+            var setColor = function (but) {
+                switch (but) {
+                    case 0:
+                        box.material = blueMat;
+                        break;
+                    case 1:
+                        box.material = redMat;
+                        break
+                }
+            };
+            var orientateY = function (angle) {
+                box.rotation.y = angle;
+            };
+
+            var displayValue = function (value) {
+                return BABYLON.Tools.ToDegrees(value) | 0;
+            };
+
+            var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+            var selectBox = new BABYLON.GUI.SelectionPanel("sp");
+            selectBox.width = 0.25;
+            selectBox.height = 0.48;
+            selectBox.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+            selectBox.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+
+            advancedTexture.addControl(selectBox);
+
+            var transformGroup = new BABYLON.GUI.CheckboxGroup("变形");
+            transformGroup.addCheckbox("缩小", toSize);
+            transformGroup.addCheckbox("高", toPlace);
+
+            // var colorGroup = new BABYLON.GUI.RadioGroup("Color");
+            // colorGroup.addRadio("Blue", setColor, true);
+            // colorGroup.addRadio("Red", setColor);
+
+            var marginGroup = new BABYLON.GUI.RadioGroup("间距");
+            marginGroup.addRadio('1.5', toMargin, true)
+            marginGroup.addRadio('1.3', toMargin)
+            marginGroup.addRadio('1.1', toMargin)
+
+            // var rotateGroup = new BABYLON.GUI.SliderGroup("Rotation", "S");
+            // rotateGroup.addSlider("Angle", orientateY, "degs", 0, 2 * Math.PI, 0, displayValue)
+
+            selectBox.addGroup(transformGroup);
+            // selectBox.addGroup(colorGroup);
+            selectBox.addGroup(marginGroup);
+            // selectBox.addGroup(rotateGroup);
         }
         // var box = BABYLON.MeshBuilder.CreateBox("box", { height: 1, width: 1, depth: 1}, scene);
         // var box2 = BABYLON.MeshBuilder.CreateBox("box2", {faceColors:faceColors,height: 1, width: 1, depth: 1}, scene);
@@ -270,6 +391,49 @@
         backgroundMaterial.reflectionTexture = new BABYLON.CubeTexture("textures/TropicalSunnyDay", scene);
         backgroundMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
         skybox.material = backgroundMaterial;
+
+
+        /*  轴线  */
+        var showAxis = function (size) {
+            var makeTextPlane = function (text, color, size) {
+                var dynamicTexture = new BABYLON.DynamicTexture("DynamicTexture", 50, scene, true);
+                dynamicTexture.hasAlpha = true;
+                dynamicTexture.drawText(text, 5, 40, "bold 36px Arial", color, "transparent", true);
+                var plane = new BABYLON.Mesh.CreatePlane("TextPlane", size, scene, true);
+                plane.material = new BABYLON.StandardMaterial("TextPlaneMaterial", scene);
+                plane.material.backFaceCulling = false;
+                plane.material.specularColor = new BABYLON.Color3(0, 0, 0);
+                plane.material.diffuseTexture = dynamicTexture;
+                return plane;
+            };
+
+            //Vector3(size, 0, 0)  x,y,z
+            var axisX = BABYLON.Mesh.CreateLines("axisX", [
+                new BABYLON.Vector3.Zero(), new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, 0.05 * size, 0),
+                new BABYLON.Vector3(size, 0, 0), new BABYLON.Vector3(size * 0.95, -0.05 * size, 0)
+            ], scene);
+            axisX.color = new BABYLON.Color3(1, 0, 0);
+            var xChar = makeTextPlane("X", "red", size / 10);
+            xChar.position = new BABYLON.Vector3(0.9 * size, -0.05 * size, 0);
+            var axisY = BABYLON.Mesh.CreateLines("axisY", [
+                new BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3(-0.05 * size, size * 0.95, 0),
+                new BABYLON.Vector3(0, size, 0), new BABYLON.Vector3(0.05 * size, size * 0.95, 0)
+            ], scene);
+            axisY.color = new BABYLON.Color3(0, 1, 0);
+            var yChar = makeTextPlane("Y", "green", size / 10);
+            yChar.position = new BABYLON.Vector3(0, 0.9 * size, -0.05 * size);
+            var axisZ = BABYLON.Mesh.CreateLines("axisZ", [
+                new BABYLON.Vector3.Zero(), new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3(0, -0.05 * size, size * 0.95),
+                new BABYLON.Vector3(0, 0, size), new BABYLON.Vector3(0, 0.05 * size, size * 0.95)
+            ], scene);
+            axisZ.color = new BABYLON.Color3(0, 0, 1);
+            var zChar = makeTextPlane("Z", "blue", size / 10);
+            zChar.position = new BABYLON.Vector3(0, 0.05 * size, 0.9 * size);
+        };
+
+
+        showAxis(10);
+
 
         return scene;
 
